@@ -1,0 +1,27 @@
+﻿.TableStyle {
+    border-collapse: collapse;
+}
+.TableStyle tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.TableStyle tr:hover{
+    background-color:#ddd;
+}
+.TableStyle th {
+    background-color: #04AA6D;
+    color: white;
+}
+.TableStyle td{
+    padding: 8px;
+}
+.ButtonStyle{
+    border-radius:10%;
+    background-color: lightsalmon;
+    font-size: 15px;
+    color: midnightblue;
+}
+.LabelStyle{
+    font-weight:bold;
+    color: coral;
+    font-size:20px;
+}
