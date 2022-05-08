@@ -1,7 +1,7 @@
 ﻿Informatika
 Studentu g. 123
 12345678
-Flintas; Newspaper; Piratai; 2018; 55; 69696; 123; 08; 22
-Vakaru fronte nieko naujo; Book; Alma Littera; 2005; 284; 15000; Remarque; 983338478
-Vakaru expresas; Journal; Technologija; 2001; 98; 15000; 12; 12; 9897947938
-15 min; Newspaper; Spaustuvėlė; 2013; 55; 11111; 123; 07; 31
+Flintas; Newspaper; Piratai; 2022; 55; 69696; 123; 04; 30; 
+Vakaru fronte nieko naujo; Book; Alma Littera; 2005; 284; 15000; Remarque; 983338478; 
+Vakaru expresas; Journal; Technologija; 2001; 98; 15000; 12; 12; 9897947938; 
+15 min; Newspaper; Spaustuvėlė; 2013; 55; 11111; 123; 07; 31; 

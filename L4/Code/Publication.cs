@@ -14,7 +14,7 @@ namespace L4.Code
         public int PageCount { get; set; }
         public int Copies { get; set; }
 
-        protected Publication(string title, string type, string publisher, int releaseYear, int pageCount, int copies)
+        public Publication(string title, string type, string publisher, int releaseYear, int pageCount, int copies)
         {
             Title = title;
             Type = type;

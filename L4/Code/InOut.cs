@@ -27,7 +27,7 @@ namespace L4.Code
 
         public static void ListToTxt(List<Publication> source, string path, string header)
         {
-            string longLine = new string('-', 155);
+            string longLine = new string('-', 167);
             using (StreamWriter sw = new StreamWriter(path, true, encoding: System.Text.Encoding.Default))
             {
                 sw.WriteLine(header);
@@ -35,12 +35,17 @@ namespace L4.Code
                 sw.WriteLine(longLine);
                 sw.WriteLine($"{"Leidinio pavadinimas", -30}|{"Tipas", -15}|{"Leidykla", -15}|{"Išleidimo metai",-15}|{"psl.", -5}|{"Tiražas", -8}|{"Leidinio nr.", -14}|{"Išl. mėn.", -10}|{"Išleidimo d.",-13 }|{"Autorius", -20}|{"ISBN", -12}|");
                 sw.WriteLine(longLine);
-
-                foreach (Publication publication in source)
+                if(source.Count > 0)
                 {
-                    sw.WriteLine(publication.ToStringTxt());
+                    foreach (Publication publication in source)
+                    {
+                        sw.WriteLine(publication.ToStringTxt());
+                    } 
                 }
-
+                else
+                {
+                    sw.WriteLine("Sąrašas yra tuščias");
+                }
                 sw.WriteLine(longLine);
                 sw.WriteLine();
             }
@@ -58,12 +63,11 @@ namespace L4.Code
                 catch (Exception ex)
                 {
 
-                    throw new Exception($"The library info of {path} is not correct");
+                    throw new Exception($"The library info of {path} is not correct ({ex.Message})");
                 }
                 if(library.LibraryTitle == "")
                 {
                     throw new Exception($"{path} file is empty.");
-                    return;
                 }
                 
                 string line;
@@ -110,13 +114,12 @@ namespace L4.Code
                                 {
                                     throw new Exception("Publication's type is misstyped, or type is not supported by program. Please" +
                                         "fix input file and try again!");
-                                    break;
                                 }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("File is not formatted correctly please fix and try again.");
+                        throw new Exception($"File is not formatted correctly please fix and try again.{ex.Message}");
                     }
                 }
             }

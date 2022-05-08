@@ -18,19 +18,17 @@ namespace L4
             {
                 throw new Exception("No files uploaded in correct format");
             }
-            if(directory.GetFiles().Length != 3)
-            {
-                throw new Exception("Please upload exatly 3 files");
-            }
             List<Library> libraries = new List<Library>();
 
-            try
+            
+            foreach (var file in directory.GetFiles())
             {
-                foreach (var file in directory.GetFiles())
+                Library library = new Library();
+                bool correctFormat = false;
+                try
                 {
                     using (StreamReader sr = new StreamReader(file.FullName))
                     {
-                        Library library = new Library();
                         library.LibraryTitle = sr.ReadLine();
                         library.Address = sr.ReadLine();
                         library.MobileNumber = Convert.ToDouble(sr.ReadLine());
@@ -38,6 +36,7 @@ namespace L4
                         string line;
                         while ((line = sr.ReadLine()) != null)
                         {
+                            correctFormat = true;
                             string[] parts = line.Split(new string[] { "; " }, StringSplitOptions.RemoveEmptyEntries);
                             string title = parts[0];
                             string type = parts[1];
@@ -80,16 +79,30 @@ namespace L4
                                     }
                             }
                         }
-                        libraries.Add(library);
                     }
-
+                }
+                catch(Exception ex)
+                {
+                    TableCell cell = new TableCell();
+                    TableRow row = new TableRow();
+                    cell.Text = $"{file.Name} file is format is corrupted";
+                    row.Cells.Add(cell);
+                    table.Rows.Add(row);
+                    table.Visible = true;
+                    continue;
+                }
+                if(correctFormat)
+                    libraries.Add(library);
+                else
+                {
+                    TableCell cell = new TableCell();
+                    TableRow row = new TableRow();
+                    cell.Text = $"{file.Name} file is empty or corrupted";
+                    row.Cells.Add(cell);
+                    table.Rows.Add(row);
+                    table.Visible = true;
                 }
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Please close open result file or check if files are not corrupeted ({ex.Message})");
-            }
-                
             return libraries;
         }
 
@@ -134,13 +147,12 @@ namespace L4
             if (errors.Count > 0)
             {
                 ErrorDisplay(table, errors);
+                return;
             }
         }
 
         public static void DrawMostCopiesTable(List<Publication> library, Table table, Label label, string header)
         {
-            
-            
             TableCell title = new TableCell();
             TableCell Copies = new TableCell();
 
@@ -151,8 +163,18 @@ namespace L4
             row.Cells.Add(Copies);
             table.Rows.Add(row);
             label.Text = header;
+            label.Visible = true;
             try
             {
+                if (library.Count == 0)
+                {
+                    TableCell empty = new TableCell();
+                    TableRow r = new TableRow();
+                    empty.Text = "Sąrašas yra tuščias";
+                    r.Cells.Add(empty);
+                    table.Rows.Add(r);
+                    return;
+                }
                 foreach (var item in library)
                 {
                     title = new TableCell();
@@ -170,9 +192,6 @@ namespace L4
                 throw new Exception($"Uploaded file is empty please deselect it and try again.({ex.Message})");
                 
             }
-
-            label.Visible = true;
-
         }
 
         public static void DrawTable(List<Publication> library, Table table)

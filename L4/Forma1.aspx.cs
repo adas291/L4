@@ -36,10 +36,15 @@ namespace L4
         /// <param name="e"></param>
         protected void Button1_Click(object sender, EventArgs e)
         {
+            Label1.Visible = false;
+            Label2.Visible = false;
+            Label3.Visible = false;
             Label4.Visible = false;
             Label5.Visible = false;
             Label6.Visible = false;
-            Label7.Visible = false;
+            Label9.Visible = false;
+            Label10.Visible = false;
+
             try
             {
                 if (Directory.Exists(Server.MapPath("~/App_Data/")))
@@ -49,8 +54,8 @@ namespace L4
             }
             catch (IOException ex)
             {
-                Label7.Text = String.Format("Please close opened result files ({0})", ex.Message);
-                Label7.Visible = true;
+                Label9.Text = String.Format("Please close opened result files ({0})", ex.Message);
+                Label9.Visible = true;
                 return;
             }
            
@@ -65,8 +70,8 @@ namespace L4
 
             catch(Exception ex)
             {
-                Label7.Visible = true;
-                Label7.Text = ex.Message;
+                Label9.Visible = true;
+                Label9.Text = ex.Message;
                 return;
             }
 
@@ -77,8 +82,8 @@ namespace L4
             }
             catch (Exception ex)
             {
-                Label8.Visible = true;
-                Label8.Text = ex.Message;
+                Label9.Visible = true;
+                Label9.Text = ex.Message;
                 return;
             }
 
@@ -93,29 +98,29 @@ namespace L4
             try
             {
                 List<Table> tables = new List<Table>();
-                tables.Add(Table1);
                 tables.Add(Table2);
                 tables.Add(Table3);
+                tables.Add(Table4);
 
                 List<Label> labels = new List<Label>();
                 labels.Add(Label1);
                 labels.Add(Label2);
                 labels.Add(Label3);
-                if(allData.Count < 3)
+                if(allData.Count <= 3)
                 {
                     for (int i = 0; i < allData.Count; i++)
                     {
                         DrawTable(allData[i].Books, tables[i]);
                         labels[i].Text = allData[i].ToString();
                         labels[i].Visible = true;
-
+                        tables[i].Visible = true;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Label7.Text = $"Please select exatly 3 library files({ex.Message})";
-                Label7.Visible = true;
+                Label9.Text = $"Please select up to 3 library files({ex.Message})";
+                Label9.Visible = true;
                 Table1.Visible = false;
                 Table2.Visible = false;
                 Table3.Visible = false;
@@ -124,45 +129,28 @@ namespace L4
             }
             //----------------------------Most Copies-------------------------
 
-            List<Publication> MaxCopies1;
-            List<Publication> MaxCopies2;
-            List<Publication> MaxCopies3;
-    
-            try
-            {
-                MaxCopies1 = TaskUtils.MostCopies(allData[0].Books);
-                MaxCopies2 = TaskUtils.MostCopies(allData[1].Books);
-                MaxCopies3 = TaskUtils.MostCopies(allData[2].Books);
-            }
-            catch(Exception ex)
-            {
-                Label7.Visible = true;
-                Label7.Text = "Please upload exatly 3 files";
-                return;
-            }
+            List<Table> MostTables = new List<Table>();
+            MostTables.Add(Table5);
+            MostTables.Add(Table6);
+            MostTables.Add(Table7);
+
+            List<Label> MostLabels = new List<Label>();
+            MostLabels.Add(Label4);
+            MostLabels.Add(Label5);
+            MostLabels.Add(Label6);
+
             
-
-            Label7.Visible = true;
-            Label7.Text = "Filtered books with most copies of each type from all libraries";
-
-            Table1.Visible = true;
-            Table2.Visible = true;
-            Table3.Visible = true;
-            Table4.Visible = true;
-
-            try
-            {
-                DrawMostCopiesTable(MaxCopies1, Table5, Label4, allData[0].ToString());
-                DrawMostCopiesTable(MaxCopies2, Table6, Label5, allData[1].ToString());
-                DrawMostCopiesTable(MaxCopies3, Table7, Label6, allData[2].ToString());
-            }
-            catch(Exception ex)
-            {
-                Label9.Visible = true;
-                Label9.Text = "Please deselect empty files and try again";
-                return;
-            }
             
+           
+            if(allData.Count <= 3 && allData.Count > 0)
+            {
+                Label10.Visible = true;
+                Label10.Text = "Atrinktos didžiausio tiražo knygos iš visų bibliotekų pagal skirtingus tipus";
+                for (int i = 0; i < allData.Count; i++)
+                {
+                    DrawMostCopiesTable(allData[i].Books, MostTables[i], MostLabels[i], allData[i].ToString());
+                }
+            }
 
             //----------------------------Unique---------------------------------
 
@@ -171,7 +159,7 @@ namespace L4
             TaskUtils.ClearDirectory(Server.MapPath(CFR1));
 
             InOut.ListToCSV(unique, Server.MapPath(CFR1));
-            InOut.ListToTxt(unique, resultPath, "Unique publications from all libraries");
+            InOut.ListToTxt(unique, resultPath, "Unikalios publikacijos visose bibliotekose");
 
             //---------------------------Not new publications-------------------------------------
             List<Publication> NotNew = new List<Publication>();
@@ -181,8 +169,8 @@ namespace L4
             }
             catch(Exception ex)
             {
-                Label7.Text = ex.Message;
-                Label7.Visible = true;
+                Label9.Text = ex.Message;
+                Label9.Visible = true;
                 return;
             }
 
@@ -207,12 +195,12 @@ namespace L4
             if (combined.Count > 0)
             {
                 InOut.ListToCSV(combined, Server.MapPath(CFR2));
-                InOut.ListToTxt(combined, resultPath, "Not new publications in all libraries");
+                InOut.ListToTxt(combined, resultPath, "Ne naujos publikacijos");
             }
             else
             {
-                File.AppendAllText(Server.MapPath(CFR2), "There are no not new publications");
-                File.AppendAllText(resultPath, "There are no not new publicaitons");
+                File.AppendAllText(Server.MapPath(CFR2), "Nera ne nauju publikacijų");
+                File.AppendAllText(resultPath, "Nera ne nauju publikaciju");
             }
 
             //-------------------------------------Specific publisher-----------------------------------
@@ -224,14 +212,13 @@ namespace L4
             if(specific.Count > 0)
             {
                 InOut.ListToCSV(specific, Server.MapPath(CFR3));
-                InOut.ListToTxt(specific, resultPath, $"{publisher}'s books in all libraries");
+                InOut.ListToTxt(specific, resultPath, $"{publisher} leidyklos knygos");
             }
             else
             {
-                File.AppendAllText(Server.MapPath(CFR3), $"There are no {publisher}'s books");
-                File.AppendAllText(Server.MapPath(resultPath), $"There are no {publisher}'s books");
+                File.AppendAllText(Server.MapPath(CFR3), $"Nera {publisher}'s knygų");
+                File.AppendAllText(resultPath, $"Nera {publisher} knygų");
             }
-
         }
     }
 }
