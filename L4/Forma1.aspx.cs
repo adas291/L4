@@ -78,7 +78,7 @@ namespace L4
             List<Library> allData;
             try
             {
-                allData = ReadDataFromFiles(directory, Table1);
+                allData = InOut.ReadDataFromFiles(directory, Table1);
             }
             catch (Exception ex)
             {

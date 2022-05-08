@@ -5,6 +5,9 @@ using System.Web;
 
 namespace L4.Code
 {
+    /// <summary>
+    /// Data class for storing information about newspaper
+    /// </summary>
     public class Newspaper:Publication
     {
         public int ReleaseNumber { get; set; }
@@ -18,7 +21,11 @@ namespace L4.Code
             ReleaseDay = releaseDay;
         }
         
-
+        /// <summary>
+        /// Compares two newspapers by standart compare to values
+        /// </summary>
+        /// <param name="other">other newspaper for comparison</param>
+        /// <returns></returns>
         public override int CompareTo(Publication other)
         {
             DateTime date1 = new DateTime(ReleaseYear, ReleaseMonth, ReleaseDay);
@@ -34,22 +41,38 @@ namespace L4.Code
             }
             return 0;
         }
-
+        /// <summary>
+        /// Check if objects are equal
+        /// </summary>
+        /// <param name="other">other newspaper</param>
+        /// <returns>return true if objects are equal by all fields</returns>
         public bool Equals(Newspaper other)
         {
-            throw new NotImplementedException();
+            return base.Equals(other) && ReleaseNumber == other.ReleaseNumber && ReleaseMonth 
+                                                       == other.ReleaseMonth && ReleaseDay 
+                                                       == other.ReleaseDay;
         }
-
+        /// <summary>
+        /// Check if objects are not new
+        /// </summary>
+        /// <returns>True if newspaper is older than 7 days</returns>
         public override bool IsNotNew()
         {
             return (TaskUtils.PublicationAgeInDays(ReleaseYear, ReleaseMonth, ReleaseDay) > 7);
 
         }
-
+        /// <summary>
+        /// Formated string for csv format
+        /// </summary>
+        /// <returns>formated string</returns>
         public override string ToString()
         {
             return base.ToString() + string.Format($";{ReleaseNumber,14};{ReleaseMonth,10};{ReleaseDay,13};{"-",-20};{"-",12};");
         }
+        /// <summary>
+        /// Formated string for text format
+        /// </summary>
+        /// <returns>formated string</returns>
         public override string ToStringTxt()
         {
             return ToString().Replace(';', '|');

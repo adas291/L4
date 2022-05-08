@@ -47,9 +47,8 @@ namespace Testai1
             }
         }
         [Fact]
-        public static void PublicationAge()
+        public static void PublicationAgeWithTwoValues()
         {
-            Newspaper n = (Newspaper)pub1[2];
             Assert.Equal(0, TaskUtils.PublicationAgeInDays(2022, 05, 8));
             Assert.NotEqual(2, TaskUtils.PublicationAgeInDays(2022, 05, 3));
         }

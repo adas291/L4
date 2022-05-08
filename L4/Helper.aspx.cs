@@ -12,100 +12,12 @@ namespace L4
 {
     public partial class Forma1 : System.Web.UI.Page
     {
-        public static List<Library> ReadDataFromFiles(DirectoryInfo directory, Table table)
-        {
-            if (directory.GetFiles().Length == 0)
-            {
-                throw new Exception("No files uploaded in correct format");
-            }
-            List<Library> libraries = new List<Library>();
-
-            
-            foreach (var file in directory.GetFiles())
-            {
-                Library library = new Library();
-                bool correctFormat = false;
-                try
-                {
-                    using (StreamReader sr = new StreamReader(file.FullName))
-                    {
-                        library.LibraryTitle = sr.ReadLine();
-                        library.Address = sr.ReadLine();
-                        library.MobileNumber = Convert.ToDouble(sr.ReadLine());
-
-                        string line;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            correctFormat = true;
-                            string[] parts = line.Split(new string[] { "; " }, StringSplitOptions.RemoveEmptyEntries);
-                            string title = parts[0];
-                            string type = parts[1];
-                            string publisher = parts[2];
-                            int releaseYear = Convert.ToInt32(parts[3]);
-                            int pageCount = Convert.ToInt32(parts[4]);
-                            int copies = Convert.ToInt32(parts[5]);
-                            switch (type)
-                            {
-                                case "Newspaper":
-                                    {
-                                        int releaseNumber = Convert.ToInt32(parts[6]);
-                                        int releaseMonth = Convert.ToInt32(parts[7]);
-                                        int releaseDay = Convert.ToInt32(parts[8]);
-                                        Newspaper newspaper = new Newspaper(releaseNumber, releaseMonth, releaseDay, title, type, publisher, releaseYear, pageCount, copies);
-                                        library.AddPublication(newspaper);
-                                        break;
-                                    }
-                                case "Journal":
-                                    {
-                                        int releaseNumber = Convert.ToInt32(parts[6]);
-                                        int releaseMonth = Convert.ToInt32(parts[7]);
-                                        double isbn = Convert.ToDouble(parts[8]);
-                                        Journal journal = new Journal(isbn, releaseNumber, releaseMonth, title, type, publisher, releaseYear, pageCount, copies);
-                                        library.AddPublication(journal);
-                                        break;
-                                    }
-                                case "Book":
-                                    {
-                                        string author = parts[6];
-                                        double isbn = Convert.ToDouble(parts[7]);
-                                        Book book = new Book(author, isbn, title, type, publisher, releaseYear, pageCount, copies);
-                                        library.AddPublication(book);
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        throw new Exception("Publication's type is misstyped, or type is not supported by program. Please" +
-                                            "fix input file and try again!");
-                                    }
-                            }
-                        }
-                    }
-                }
-                catch(Exception ex)
-                {
-                    TableCell cell = new TableCell();
-                    TableRow row = new TableRow();
-                    cell.Text = $"{file.Name} file is format is corrupted";
-                    row.Cells.Add(cell);
-                    table.Rows.Add(row);
-                    table.Visible = true;
-                    continue;
-                }
-                if(correctFormat)
-                    libraries.Add(library);
-                else
-                {
-                    TableCell cell = new TableCell();
-                    TableRow row = new TableRow();
-                    cell.Text = $"{file.Name} file is empty or corrupted";
-                    row.Cells.Add(cell);
-                    table.Rows.Add(row);
-                    table.Visible = true;
-                }
-            }
-            return libraries;
-        }
-
+       
+        /// <summary>
+        /// fills error table with error strings
+        /// </summary>
+        /// <param name="table">table to fill</param>
+        /// <param name="errors">errors to display</param>
         public static void ErrorDisplay(Table table, List<string> errors)
         {
             table.Visible = true;
@@ -118,7 +30,13 @@ namespace L4
                 table.Rows.Add(row);
             }
         }
-
+        /// <summary>
+        /// Saves file to server for later reading
+        /// </summary>
+        /// <param name="directory">directory to save</param>
+        /// <param name="fileUploads">File upload item</param>
+        /// <param name="table">Error table</param>
+        /// <exception cref="Exception">For corrupted file validation</exception>
         public static void SaveFilesToDirectory(DirectoryInfo directory,
             FileUpload fileUploads, Table table)
         {
@@ -150,7 +68,14 @@ namespace L4
                 return;
             }
         }
-
+        /// <summary>
+        /// Draws table for most copies data
+        /// </summary>
+        /// <param name="library">Library to search from</param>
+        /// <param name="table">table to fill</param>
+        /// <param name="label">label for table</param>
+        /// <param name="header">string header befor table</param>
+        /// <exception cref="Exception"></exception>
         public static void DrawMostCopiesTable(List<Publication> library, Table table, Label label, string header)
         {
             TableCell title = new TableCell();
@@ -193,7 +118,12 @@ namespace L4
                 
             }
         }
-
+        /// <summary>
+        /// Draws primary data on display
+        /// </summary>
+        /// <param name="library">library to display</param>
+        /// <param name="table">table to print to</param>
+        /// <exception cref="Exception">Check if given files are in correct fromat</exception>
         public static void DrawTable(List<Publication> library, Table table)
         {
             TableCell name = new TableCell();
@@ -311,8 +241,6 @@ namespace L4
             {
                 throw new Exception($"File is empty, or corrupted please fix it.\n{ex.Message}");
             }
-            
-
         }
     }
 }
